@@ -70,9 +70,10 @@ class ActionMiddlewareManager
                 return collect();
             }
 
-            $this->middlewareSchemaValidator->validate($actionMiddlewares);
-
-            return ActionMiddlewareFactory::createCollectionFromResponse($actionMiddlewares);
+            return ActionMiddlewareFactory::createCollectionFromResponse(
+                $this->middlewareSchemaValidator,
+                $actionMiddlewares
+            );
         } catch (Throwable $e) {
             throw new ActionMiddlewareRunException(
                 "Get Middleware failed: {$e->getMessage()}",
@@ -102,7 +103,13 @@ class ActionMiddlewareManager
             ];
 
             $responseData = $this->runnerGateway->sendRequest($endpoint, $data, $headers);
-            $this->responseSchemaValidatorFactory->createSchemaValidatorByType($type)->validate($responseData);
+            $isValid = $this->responseSchemaValidatorFactory->createSchemaValidatorByType($type)->isValid(
+                $responseData
+            );
+
+            if ($isValid) {
+                $this->responseFactory->createResponseByType($type, $payload, $responseData)->handle();
+            }
         } catch (Throwable $e) {
             throw new ActionMiddlewareRunException(
                 "Process data failed: {$e->getMessage()}",
@@ -110,8 +117,6 @@ class ActionMiddlewareManager
                 $e
             );
         }
-
-        $this->responseFactory->createResponseByType($type, $payload, $responseData)->handle();
     }
 
     /**

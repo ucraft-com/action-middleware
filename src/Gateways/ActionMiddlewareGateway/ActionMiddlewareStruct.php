@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Uc\ActionMiddleware\Gateways\ActionMiddlewareGateway;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Uc\ActionMiddleware\Enums\ActionMiddlewareType;
 
-class ActionMiddlewareStruct
+class ActionMiddlewareStruct implements Arrayable
 {
     /**
      * @var int|string
@@ -101,6 +102,7 @@ class ActionMiddlewareStruct
     {
         $this->endpoint = $endpoint;
     }
+
     /**
      * @return bool
      */
@@ -189,5 +191,19 @@ class ActionMiddlewareStruct
     public function setConfig(?array $config): void
     {
         $this->config = $config;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'projectId' => $this->getProjectId(),
+            'alias'     => $this->getAlias(),
+            'endpoint'  => $this->getEndpoint(),
+            'active'    => $this->getActive(),
+            'actions'   => $this->getActions(),
+            'type'      => $this->getType(),
+            'headers'   => $this->getHeaders(),
+            'config'    => $this->getConfig(),
+        ];
     }
 }

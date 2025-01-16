@@ -3,10 +3,10 @@
   "type": "array",
   "properties": {
     "payload": {
-      "type": "array"
+      "type": "object"
     },
     "config": {
-      "type": "array"
+      "type": "object"
     }
   },
   "required": ["payload", "config"]

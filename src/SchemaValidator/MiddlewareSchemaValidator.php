@@ -4,40 +4,25 @@ declare(strict_types=1);
 
 namespace Uc\ActionMiddleware\SchemaValidator;
 
-use JsonSchema\Validator;
-use Uc\ActionMiddleware\Exceptions\ActionMiddlewareDataException;
-
-class MiddlewareSchemaValidator implements SchemaValidatorInterface
+class MiddlewareSchemaValidator extends BaseSchemaValidator implements SchemaValidatorInterface
 {
-    protected object $schema;
-
-    public function __construct(protected Validator $validator)
-    {
-        $schemaPath = __DIR__.'/../../schemas/actionMiddleware/actionMiddleware-schema.json';
-
-        $this->schema = json_decode(file_get_contents($schemaPath));
-    }
+    protected string $schemaPath = __DIR__.'/../../schemas/actionMiddleware/actionMiddleware-schema.json';
 
     /**
      * @param array $data
      *
      * @return bool
      */
-    public function validate(array $data): bool
+    public function isValid(array $data): bool
     {
-        $this->validator->validate($data, $this->schema);
+        return $this->validate($data);
+    }
 
-        if (!$this->validator->isValid()) {
-            $errors = [];
-            foreach ($this->validator->getErrors() as $error) {
-                $errors[] = sprintf("[%s] %s", $error['property'], $error['message']);
-            }
-
-            throw new ActionMiddlewareDataException(
-                'Action Middleware data does not validate. Violations: '.implode("\n", $errors)
-            );
-        }
-
-        return true;
+    /**
+     * @return string
+     */
+    public function getSchemaPath(): string
+    {
+        return $this->schemaPath;
     }
 }

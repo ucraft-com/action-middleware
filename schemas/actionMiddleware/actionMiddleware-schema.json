@@ -1,41 +1,81 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "array",
+  "type": "object",
   "properties": {
-    "alias": {
-      "type": "string"
-    },
-    "projectId": {
-      "type": "integer"
-    },
-    "endpoint": {
-      "type": "string"
-    },
-    "active": {
-      "type": "boolean"
-    },
-    "actions": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
     "type": {
       "type": "string",
-      "enum": ["create_customer"]
+      "enum": [
+        "validation",
+        "listener"
+      ],
+      "description": "The type of the middleware action, specifically 'validation'."
     },
-    "headers": {
-      "type": "array",
+    "endpoint": {
+      "type": "string",
+      "format": "uri",
+      "description": "The endpoint URL for the middleware."
+    },
+    "alias": {
+      "type": "string",
+      "description": "The alias for the middleware."
+    },
+    "actions": {
+      "type": [
+        "array",
+        "string"
+      ],
+      "description": "Either an array of actions or a JSON-encoded string representing an array of actions.",
       "items": {
-        "type": "object"
+        "type": "string"
       }
     },
     "config": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "type": [
+        "object",
+        "string"
+      ],
+      "description": "Either a configuration object or a JSON-encoded string representing a configuration object."
+    },
+    "active": {
+      "type": [
+        "boolean",
+        "string",
+        "integer"
+      ],
+      "enum": [
+        1,
+        0,
+        "1",
+        "0",
+        true,
+        false
+      ],
+      "description": "Can be a string ('1' or '0') or a boolean (true or false) representing the active state."
+    },
+    "headers": {
+      "type": [
+        "object",
+        "string"
+      ],
+      "description": "Either a headers object or a JSON-encoded string representing a headers object."
+    },
+    "projectId": {
+      "type": [
+        "integer",
+        "string"
+      ],
+      "description": "The project ID, which can be an integer or a string."
     }
   },
-  "required": ["alias", "projectId", "endpoint", "active", "type", "actions", "headers", "config"]
+  "required": [
+    "type",
+    "endpoint",
+    "alias",
+    "actions",
+    "config",
+    "active",
+    "headers",
+    "projectId"
+  ],
+  "additionalProperties": false
 }

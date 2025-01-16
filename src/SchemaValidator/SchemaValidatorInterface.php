@@ -6,5 +6,10 @@ namespace Uc\ActionMiddleware\SchemaValidator;
 
 interface SchemaValidatorInterface
 {
-    public function validate(array $data): bool;
+    /**
+     * @param array  $data
+     *
+     * @return bool
+     */
+    public function isValid(array $data): bool;
 }

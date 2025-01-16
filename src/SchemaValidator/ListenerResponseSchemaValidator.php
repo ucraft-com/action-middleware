@@ -4,10 +4,25 @@ declare(strict_types=1);
 
 namespace Uc\ActionMiddleware\SchemaValidator;
 
-class ListenerResponseSchemaValidator implements SchemaValidatorInterface
+class ListenerResponseSchemaValidator extends BaseSchemaValidator implements SchemaValidatorInterface
 {
-    public function validate(array $data): bool
+    protected string $schemaPath = '/../../schemas/actionMiddlewareRunner/listener/response-schema.json';
+
+    /**
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function isValid(array $data): bool
     {
-        return true;
+        return $this->validate($data);
+    }
+
+    /**
+     * @return string
+     */
+    public function getSchemaPath(): string
+    {
+        return $this->schemaPath;
     }
 }
