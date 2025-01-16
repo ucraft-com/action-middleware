@@ -44,6 +44,10 @@ class ActionMiddlewareManager
     ): void {
         $filteredPayload = $this->payloadFilter($payload, $allowedKeys);
 
+        if (empty($filteredPayload)) {
+            return;
+        }
+
         try {
             $middlewares = $this->getMiddlewares();
 
