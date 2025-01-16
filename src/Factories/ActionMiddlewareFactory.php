@@ -21,6 +21,10 @@ class ActionMiddlewareFactory
         MiddlewareSchemaValidator $validator,
         array $data
     ): ?ActionMiddlewareStruct {
+        $data['actions'] = json_decode($data['actions'] ?? '[]', true) ?? [];
+        $data['headers'] = json_decode($data['headers'] ?? '[]', true) ?? [];
+        $data['config'] = json_decode($data['config'] ?? '[]', true) ?? [];
+
         if ($validator->isValid($data)) {
             $actionMiddleware = new ActionMiddlewareStruct();
 
@@ -29,9 +33,9 @@ class ActionMiddlewareFactory
             $actionMiddleware->setEndpoint($data['endpoint']);
             $actionMiddleware->setActive((bool)$data['active']);
             $actionMiddleware->setType(ActionMiddlewareType::from($data['type']));
-            $actionMiddleware->setActions(json_decode($data['actions'] ?? '[]', true) ?? []);
-            $actionMiddleware->setHeaders(json_decode($data['headers'] ?? '[]', true) ?? []);
-            $actionMiddleware->setConfig(json_decode($data['config'] ?? '[]', true) ?? []);
+            $actionMiddleware->setActions($data['actions']);
+            $actionMiddleware->setHeaders($data['headers']);
+            $actionMiddleware->setConfig($data['config']);
 
             return $actionMiddleware;
         }

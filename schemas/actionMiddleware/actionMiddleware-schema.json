@@ -1,6 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
+  "type": "array",
   "properties": {
     "type": {
       "type": "string",
@@ -32,7 +31,7 @@
     "config": {
       "type": [
         "object",
-        "string"
+        "array"
       ],
       "description": "Either a configuration object or a JSON-encoded string representing a configuration object."
     },
@@ -55,7 +54,7 @@
     "headers": {
       "type": [
         "object",
-        "string"
+        "array"
       ],
       "description": "Either a headers object or a JSON-encoded string representing a headers object."
     },

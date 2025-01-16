@@ -16,7 +16,7 @@ class ValidationResponse implements ActionMiddlewareResponseInterface
     protected bool $isSuccess = false;
 
     /**
-     * @var array|mixed
+     * @var array
      */
     protected array $messages = [];
 
@@ -29,6 +29,7 @@ class ValidationResponse implements ActionMiddlewareResponseInterface
      * @var array
      */
     protected array $inputData = [];
+
     public function __construct(
         array $inputData,
         array $responseData

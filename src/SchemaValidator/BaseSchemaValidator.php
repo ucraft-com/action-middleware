@@ -47,11 +47,11 @@ abstract class BaseSchemaValidator
 
             return true;
         } catch (Throwable $e) {
-            throw new ActionMiddlewareRunException(
-                "Schema Validation data failed: {$e->getMessage()}",
-                Response::HTTP_INTERNAL_SERVER_ERROR,
-                $e
-            );
+            $this->logger->error('Error run action middleware.', [
+                'message' => "Schema Validation data failed: {$e->getMessage()}"
+            ]);
+
+            return false;
         }
     }
 }

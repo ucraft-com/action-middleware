@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Uc\ActionMiddleware;
 
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use Uc\ActionMiddleware\Enums\ActionType;
 use Uc\ActionMiddleware\Enums\ExcludedKey;
@@ -75,11 +74,9 @@ class ActionMiddlewareManager
                 $actionMiddlewares
             );
         } catch (Throwable $e) {
-            throw new ActionMiddlewareRunException(
-                "Get Middleware failed: {$e->getMessage()}",
-                Response::HTTP_BAD_GATEWAY,
-                $e
-            );
+            $this->createLog((string)$e->getCode(), $e->getMessage());
+
+            return collect();
         }
     }
 
@@ -103,19 +100,15 @@ class ActionMiddlewareManager
             ];
 
             $responseData = $this->runnerGateway->sendRequest($endpoint, $data, $headers);
-            $isValid = $this->responseSchemaValidatorFactory->createSchemaValidatorByType($type)->isValid(
-                $responseData
-            );
-
-            if ($isValid) {
-                $this->responseFactory->createResponseByType($type, $payload, $responseData)->handle();
-            }
         } catch (Throwable $e) {
-            throw new ActionMiddlewareRunException(
-                "Process data failed: {$e->getMessage()}",
-                Response::HTTP_BAD_GATEWAY,
-                $e
-            );
+            $this->createLog((string)$e->getCode(), $e->getMessage());
+            return;
+        }
+
+        $isValid = $this->responseSchemaValidatorFactory->createSchemaValidatorByType($type)->isValid($responseData);
+
+        if ($isValid) {
+            $this->responseFactory->createResponseByType($type, $payload, $responseData)->handle();
         }
     }
 
@@ -125,8 +118,10 @@ class ActionMiddlewareManager
      *
      * @return array
      */
-    protected function payloadFilter(array $payload, array $allowedKeys): array
-    {
+    protected function payloadFilter(
+        array $payload,
+        array $allowedKeys,
+    ): array {
         $excludedKeys = ExcludedKey::getExcludedKeys();
         $filteredPayload = array_diff_key($payload, array_flip($excludedKeys));
 
@@ -143,8 +138,10 @@ class ActionMiddlewareManager
      *
      * @return bool
      */
-    protected function isValidAction(ActionMiddlewareStruct $actionMiddleware, ActionType $action): bool
-    {
+    protected function isValidAction(
+        ActionMiddlewareStruct $actionMiddleware,
+        ActionType $action,
+    ): bool {
         $actions = $actionMiddleware->getActions();
 
         return in_array($action, $actions);
@@ -156,8 +153,10 @@ class ActionMiddlewareManager
      *
      * @return void
      */
-    protected function createLog(string $code, string $message): void
-    {
+    protected function createLog(
+        string $code,
+        string $message,
+    ): void {
         $this->logger->error('Error run action middleware.'.$code, [
             'message' => $message,
             'code'    => $code,
