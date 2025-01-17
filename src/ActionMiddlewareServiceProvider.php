@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Uc\ActionMiddleware;
 
 use Uc\ActionMiddleware\Exceptions\ActionMiddlewareGatewayConnectionException;
-use Uc\ActionMiddleware\Gateways\ActionMiddlewareGateway\ActionMiddlewareGateway;
 use Uc\ActionMiddleware\Gateways\ActionMiddlewareGateway\ActionMiddlewareGatewayInterface;
 use Uc\ActionMiddleware\Gateways\ActionMiddlewareRunnerGateway\ActionMiddlewareRunnerGateway;
 use Uc\ActionMiddleware\Gateways\ActionMiddlewareRunnerGateway\ActionMiddlewareRunnerGatewayInterface;
