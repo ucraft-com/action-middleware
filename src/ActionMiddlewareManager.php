@@ -51,7 +51,7 @@ class ActionMiddlewareManager
             $middlewares = $this->getMiddlewares();
 
             foreach ($middlewares as $middleware) {
-                if (!$this->isValidAction($middleware, $action) && $middleware->getActive()) {
+                if ($this->isValidAction($middleware, $action) && $middleware->getActive()) {
                     $this->processData($middleware, $filteredPayload);
                 }
             }
@@ -148,6 +148,10 @@ class ActionMiddlewareManager
     ): bool {
         $actions = $actionMiddleware->getActions();
 
-        return in_array($action, $actions);
+        if (empty($actions)) {
+            return false;
+        }
+
+        return in_array($action->value, $actions);
     }
 }
