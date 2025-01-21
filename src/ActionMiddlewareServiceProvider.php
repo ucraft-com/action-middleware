@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uc\ActionMiddleware;
 
+use Psr\Log\LoggerInterface;
 use Uc\ActionMiddleware\Exceptions\ActionMiddlewareGatewayConnectionException;
 use Uc\ActionMiddleware\Gateways\ActionMiddlewareGateway\ActionMiddlewareGatewayInterface;
 use Uc\ActionMiddleware\Gateways\ActionMiddlewareRunnerGateway\ActionMiddlewareRunnerGateway;
@@ -32,6 +33,10 @@ class ActionMiddlewareServiceProvider extends IlluminateServiceProvider
         $this->app->bind(ActionMiddlewareRunnerGatewayInterface::class, function () {
             return new ActionMiddlewareRunnerGateway(new Client());
         });
+
+        $this->app->singleton(ErrorHandler::class, function () {
+            return new ErrorHandler($this->getActionMiddlewareLogger());
+        });
     }
 
     /**
@@ -42,5 +47,26 @@ class ActionMiddlewareServiceProvider extends IlluminateServiceProvider
         throw new ActionMiddlewareGatewayConnectionException(
             'Unable to create ActionMiddlewareGateway. (getActionMiddlewareGateway) method must be overridden in the extended service provider.'
         );
+    }
+
+    /**
+     * @return \Psr\Log\LoggerInterface
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    protected function getActionMiddlewareLogger(): LoggerInterface
+    {
+        return $this->app->make(LoggerInterface::class);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function provides(): array
+    {
+        return [
+            ActionMiddlewareGatewayInterface::class,
+            ActionMiddlewareRunnerGatewayInterface::class,
+            ErrorHandler::class,
+        ];
     }
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Uc\ActionMiddleware\Factories;
 
 use JsonSchema\Validator;
-use Psr\Log\LoggerInterface;
 use Uc\ActionMiddleware\Enums\ActionMiddlewareType;
+use Uc\ActionMiddleware\ErrorHandler;
 use Uc\ActionMiddleware\SchemaValidator\ListenerResponseSchemaValidator;
 use Uc\ActionMiddleware\SchemaValidator\ValidationResponseSchemaValidator;
 use Uc\ActionMiddleware\SchemaValidator\SchemaValidatorInterface;
@@ -15,7 +15,7 @@ class ResponseSchemaValidatorFactory
 {
     public function __construct(
         protected Validator $validator,
-        protected LoggerInterface $logger,
+        protected ErrorHandler $errorHandler,
     ) {
     }
     public function createSchemaValidatorByType(
@@ -32,7 +32,7 @@ class ResponseSchemaValidatorFactory
      */
     public function createListenerValidator(): SchemaValidatorInterface
     {
-        return new ListenerResponseSchemaValidator($this->validator, $this->logger);
+        return new ListenerResponseSchemaValidator($this->validator, $this->errorHandler);
     }
 
     /**
@@ -40,6 +40,6 @@ class ResponseSchemaValidatorFactory
      */
     public function createValidationValidator(): SchemaValidatorInterface
     {
-        return new ValidationResponseSchemaValidator($this->validator, $this->logger);
+        return new ValidationResponseSchemaValidator($this->validator, $this->errorHandler);
     }
 }

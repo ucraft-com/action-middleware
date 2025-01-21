@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Uc\ActionMiddleware;
 
-use Psr\Log\LoggerInterface;
 use Throwable;
 use Uc\ActionMiddleware\Enums\ActionType;
 use Uc\ActionMiddleware\Enums\ExcludedKey;
@@ -26,7 +25,7 @@ class ActionMiddlewareManager
         protected ActionMiddlewareGatewayInterface $actionMiddlewareGateway,
         protected MiddlewareSchemaValidator $middlewareSchemaValidator,
         protected ResponseSchemaValidatorFactory $responseSchemaValidatorFactory,
-        protected LoggerInterface $logger,
+        protected ErrorHandler $errorHandler,
     ) {
     }
 
@@ -44,6 +43,10 @@ class ActionMiddlewareManager
     ): void {
         $filteredPayload = $this->payloadFilter($payload, $allowedKeys);
 
+        if (empty($filteredPayload)) {
+            return;
+        }
+
         try {
             $middlewares = $this->getMiddlewares();
 
@@ -53,7 +56,7 @@ class ActionMiddlewareManager
                 }
             }
         } catch (ActionMiddlewareRunException $e) {
-            $this->createLog((string)$e->getCode(), $e->getMessage());
+            $this->errorHandler->logError($e);
         }
     }
 
@@ -74,7 +77,7 @@ class ActionMiddlewareManager
                 $actionMiddlewares
             );
         } catch (Throwable $e) {
-            $this->createLog((string)$e->getCode(), $e->getMessage());
+            $this->errorHandler->logError($e);
 
             return collect();
         }
@@ -101,7 +104,8 @@ class ActionMiddlewareManager
 
             $responseData = $this->runnerGateway->sendRequest($endpoint, $data, $headers);
         } catch (Throwable $e) {
-            $this->createLog((string)$e->getCode(), $e->getMessage());
+            $this->errorHandler->logError($e);
+
             return;
         }
 
@@ -145,21 +149,5 @@ class ActionMiddlewareManager
         $actions = $actionMiddleware->getActions();
 
         return in_array($action, $actions);
-    }
-
-    /**
-     * @param string $code
-     * @param string $message
-     *
-     * @return void
-     */
-    protected function createLog(
-        string $code,
-        string $message,
-    ): void {
-        $this->logger->error('Error run action middleware.'.$code, [
-            'message' => $message,
-            'code'    => $code,
-        ]);
     }
 }
