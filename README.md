@@ -20,17 +20,8 @@ Or you can simply run
 composer require ucraft-com/action-middleware
 ```
 
-2. Publish the configuration file:
 
-```
-php artisan vendor:publish --tag=action-middleware
-```
-
-
-3. Configure your middleware settings in the published config/action-middleware.php file.
-
-
-4.  To integrate the Action Middleware Gateway, extend the ActionMiddlewareServiceProvider as shown below:
+2.  To integrate the Action Middleware Gateway, extend the ActionMiddlewareServiceProvider as shown below:
 
 ```php
 class ActionMiddlewareServiceProvider extends BaseActionMiddlewareServiceProvider

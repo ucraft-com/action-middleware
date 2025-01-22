@@ -21,7 +21,6 @@
         "guzzlehttp/guzzle": ">=7.4",
         "illuminate/config": ">=10.0",
         "illuminate/contracts": ">=10.0",
-        "illuminate/redis": ">=10.0",
         "illuminate/support": ">=10.0",
         "illuminate/validation": ">=10.0",
         "justinrainbow/json-schema": "^6.0"
