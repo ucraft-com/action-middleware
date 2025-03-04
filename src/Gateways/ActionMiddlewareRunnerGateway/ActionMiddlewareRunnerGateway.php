@@ -32,11 +32,11 @@ class ActionMiddlewareRunnerGateway implements ActionMiddlewareRunnerGatewayInte
                 'headers' => $headers,
                 'json'    => $data
             ]);
-
-            return $this->validateResponse($response);
         } catch (Throwable $e) {
-            throw new BadGatewayException($e->getMessage());
+            throw new BadGatewayException($e->getMessage(), Response::HTTP_BAD_GATEWAY);
         }
+
+        return $this->validateResponse($response);
     }
 
     /**

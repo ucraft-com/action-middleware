@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Uc\ActionMiddleware\SchemaValidator;
 
 use JsonSchema\Validator;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
-use Uc\ActionMiddleware\Exceptions\ActionMiddlewareRunException;
+use Uc\ActionMiddleware\ErrorHandler;
+use Uc\ActionMiddleware\Exceptions\SchemaValidatorException;
 
 abstract class BaseSchemaValidator
 {
@@ -16,7 +16,7 @@ abstract class BaseSchemaValidator
 
     public function __construct(
         protected Validator $validator,
-        protected LoggerInterface $logger,
+        protected ErrorHandler $errorHandler,
     ) {
     }
 
@@ -38,18 +38,13 @@ abstract class BaseSchemaValidator
                     $errors[] = sprintf("[%s] %s", $error['property'], $error['message']);
                 }
                 $errorMessages = implode("\n", $errors);
-                $this->logger->error('Error run action middleware.', [
-                    'message' => 'Action Middleware data does not validate. Violations: '.$errorMessages
-                ]);
 
-                return false;
+                throw new SchemaValidatorException('Action Middleware data does not validate. Violations: '.$errorMessages, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             return true;
         } catch (Throwable $e) {
-            $this->logger->error('Error run action middleware.', [
-                'message' => "Schema Validation data failed: {$e->getMessage()}"
-            ]);
+            $this->errorHandler->logError($e);
 
             return false;
         }
