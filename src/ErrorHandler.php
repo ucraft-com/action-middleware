@@ -22,7 +22,7 @@ class ErrorHandler
      */
     public function logError(
         Throwable $exception,
-        array $context = []
+        array $context = [],
     ): void {
         $this->logger->error('Exception logged by ActionMiddleware', [
             'message' => $exception->getMessage(),

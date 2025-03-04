@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Uc\ActionMiddleware\SchemaValidator;
 
 use JsonSchema\Validator;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use Uc\ActionMiddleware\ErrorHandler;
 use Uc\ActionMiddleware\Exceptions\SchemaValidatorException;
@@ -38,7 +39,7 @@ abstract class BaseSchemaValidator
                 }
                 $errorMessages = implode("\n", $errors);
 
-                throw new SchemaValidatorException('Action Middleware data does not validate. Violations: '.$errorMessages, 422);
+                throw new SchemaValidatorException('Action Middleware data does not validate. Violations: '.$errorMessages, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             return true;
